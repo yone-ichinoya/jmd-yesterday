@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex" />
+  <title>Kaiji Press Yesterday Redirect</title>
+  <script>
+    function ymdTokyo(daysOffset) {
+      const tz = "Asia/Tokyo";
+      const fmt = new Intl.DateTimeFormat("en-CA", {
+        timeZone: tz,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+
+      // 東京の今日（YYYY-MM-DD）
+      const todayTokyo = fmt.format(new Date());
+      // 東京の今日 00:00（+09:00 明示）
+      const base = new Date(`${todayTokyo}T00:00:00+09:00`);
+      // オフセット（日数）
+      const target = new Date(base.getTime() + daysOffset * 24 * 60 * 60 * 1000);
+
+      // 東京日付で YYYY-MM-DD
+      return fmt.format(target);
+    }
+
+    window.onload = function () {
+      const y = ymdTokyo(-1); // 前日（東京）
+      // 海事プレスONLINE 検索：日付範囲を「前日〜前日」に固定、キーワード空
+      const url =
+        "https://www.kaijipress.com/search/?" +
+        "page=1" +
+        "&src_category=" +
+        "&src_tag=" +
+        "&src_keyword=" +
+        "&src_str_date=" + encodeURIComponent(y) +
+        "&src_end_date=" + encodeURIComponent(y);
+
+      window.location.replace(url);
+    };
+  </script>
+</head>
+<body>
+  前日の「海事プレスONLINE」検索結果へ移動します…
+</body>
+</html>
