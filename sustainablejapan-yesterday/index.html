@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex" />
+  <title>Sustainable Japan Yesterday (Google)</title>
+  <script>
+    function tokyoYMD(daysOffset) {
+      const tz = "Asia/Tokyo";
+      const fmt = new Intl.DateTimeFormat("en-CA", {
+        timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit"
+      });
+
+      const todayTokyo = fmt.format(new Date());      // YYYY-MM-DD
+      const base = new Date(`${todayTokyo}T00:00:00+09:00`);
+      const target = new Date(base.getTime() + daysOffset * 86400000);
+
+      const ymd = fmt.format(target);                 // YYYY-MM-DD
+      const [y, m, d] = ymd.split("-");
+
+      // Googleのカスタム日付はだいたい M/D/YYYY が通りやすい
+      const mdY = `${Number(m)}/${Number(d)}/${y}`;
+      return { ymd, mdY };
+    }
+
+    window.onload = function () {
+      const { mdY } = tokyoYMD(-1); // 前日（東京）
+
+      // お好みでキーワードを調整してください（今はあなたのセットを入れてます）
+      const keywords =
+        '("Global warming" OR "Climate change" OR energy OR SDGs OR ESG OR net OR carbon OR clean OR green OR hydrogen OR ammonia OR renewable OR gas OR 温暖化 OR 気候変動 OR 脱炭素 OR 水素 OR アンモニア OR 再エネ OR 温室効果ガス)';
+
+      const q = `site:sustainablejapan.jp ${keywords}`;
+
+      // 前日だけ：cd_min=前日、cd_max=前日
+      const tbs = `cdr:1,cd_min:${mdY},cd_max:${mdY}`;
+
+      const url =
+        "https://www.google.com/search?q=" + encodeURIComponent(q) +
+        "&tbs=" + encodeURIComponent(tbs);
+
+      location.replace(url);
+    };
+  </script>
+</head>
+<body>
+  前日のSustainable Japan記事（Google検索）へ移動します…
+</body>
+</html>
