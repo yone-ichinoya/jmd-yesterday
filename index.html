@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex" />
+  <title>JMD Yesterday Redirect</title>
+  <script>
+    function ymdInTokyoMinus(days) {
+      const tz = "Asia/Tokyo";
+      const fmt = new Intl.DateTimeFormat("en-CA", {
+        timeZone: tz,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+
+      // 今日の東京日付(YYYY-MM-DD)を取る
+      const todayTokyo = fmt.format(new Date()); // e.g. 2026-03-06
+
+      // 東京の "今日 00:00" を Date 化（+09:00 明示）
+      const base = new Date(`${todayTokyo}T00:00:00+09:00`);
+
+      // days日前へ
+      const target = new Date(base.getTime() + days * 24 * 60 * 60 * 1000);
+
+      // 東京日付として YYYYMMDD を生成
+      const ymd = fmt.format(target).replaceAll("-", "");
+      return ymd;
+    }
+
+    window.onload = function () {
+      const ymd = ymdInTokyoMinus(-1); // 前日
+      const url = `https://www.jmd.co.jp/articleList.php?date=7&targetdate=${ymd}`;
+      window.location.replace(url);
+    };
+  </script>
+</head>
+<body>
+  前日の日本海事新聞へ移動します…
+</body>
+</html>
