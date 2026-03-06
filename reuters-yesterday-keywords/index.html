@@ -8,31 +8,41 @@
     function tokyoMDY(daysOffset) {
       const tz = "Asia/Tokyo";
       const fmt = new Intl.DateTimeFormat("en-CA", {
-        timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit"
+        timeZone: tz,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
       });
 
-      const todayTokyo = fmt.format(new Date()); // YYYY-MM-DD
+      // Tokyo "today" as YYYY-MM-DD
+      const todayTokyo = fmt.format(new Date());
+      // Tokyo today 00:00 (explicit +09:00)
       const base = new Date(`${todayTokyo}T00:00:00+09:00`);
       const target = new Date(base.getTime() + daysOffset * 86400000);
 
       const ymd = fmt.format(target);
       const [y, m, d] = ymd.split("-");
-      return `${Number(m)}/${Number(d)}/${y}`; // M/D/YYYY
+      // Google custom date format tends to accept M/D/YYYY
+      return `${Number(m)}/${Number(d)}/${y}`;
     }
 
     window.onload = function () {
       const mdY = tokyoMDY(-1); // yesterday in Tokyo time
 
+      // English keywords only
       const keywords =
         '("global warming" OR "climate change" OR energy OR SDGs OR ESG OR carbon OR hydrogen OR ammonia OR renewable OR gas OR "green energy" OR "clean energy" OR emissions OR "net zero")';
 
-      // Exclude Japanese Reuters domain; optionally exclude jp/ja in URL if needed
+      // IMPORTANT: do NOT quote the -site: operator (it must be an operator, not a string)
+      // Optional extra filters to reduce non-English results:
+      // -inurl:jp -inurl:/jp/ -inurl:ja -inurl:/ja/
       const q =
-        `site:reuters.com -site:jp.reuters.com ${keywords}`;
+        `site:reuters.com -site:jp.reuters.com -inurl:jp -inurl:/jp/ -inurl:ja -inurl:/ja/ ${keywords}`;
 
+      // Custom date range: yesterday only
       const tbs = `cdr:1,cd_min:${mdY},cd_max:${mdY}`;
 
-      // Force English language results (lr=lang_en) and English UI (hl=en)
+      // Force English UI and language-filtered results
       const url =
         "https://www.google.com/search?q=" + encodeURIComponent(q) +
         "&tbs=" + encodeURIComponent(tbs) +
@@ -43,6 +53,6 @@
   </script>
 </head>
 <body>
-  Redirecting...
+  Redirecting to Reuters articles from yesterday (English only)...
 </body>
 </html>
