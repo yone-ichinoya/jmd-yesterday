@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex" />
+  <title>Reuters Yesterday + Keywords (Google)</title>
+  <script>
+    function tokyoMDY(daysOffset) {
+      const tz = "Asia/Tokyo";
+      const fmt = new Intl.DateTimeFormat("en-CA", {
+        timeZone: tz,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      });
+
+      const todayTokyo = fmt.format(new Date()); // YYYY-MM-DD
+      const base = new Date(`${todayTokyo}T00:00:00+09:00`);
+      const target = new Date(base.getTime() + daysOffset * 86400000);
+
+      const ymd = fmt.format(target);
+      const [y, m, d] = ymd.split("-");
+      return `${Number(m)}/${Number(d)}/${y}`; // Google向け M/D/YYYY
+    }
+
+    window.onload = function () {
+      const mdY = tokyoMDY(-1); // 前日（東京）
+
+      const keywords =
+        '("Global warming" OR "Climate change" OR energy OR SDGs OR ESG OR net OR carbon OR clean OR green OR hydrogen OR ammonia OR renewable OR gas' +
+        ' OR 温暖化 OR 気候変動 OR 脱炭素 OR カーボン OR 二酸化炭素 OR CO2 OR 水素 OR アンモニア OR 再生可能 OR 再生可能エネルギー OR 再エネ OR 温室効果ガス OR ネットゼロ OR カーボンクレジット' +
+        ' OR 脱炭素化 OR GX OR カーボンニュートラル OR 排出量)';
+
+      const q = `site:reuters.com ${keywords}`;
+      const tbs = `cdr:1,cd_min:${mdY},cd_max:${mdY}`;
+
+      const url =
+        "https://www.google.com/search?q=" + encodeURIComponent(q) +
+        "&tbs=" + encodeURIComponent(tbs);
+
+      location.replace(url);
+    };
+  </script>
+</head>
+<body>
+  前日のReuters（キーワード検索）へ移動します…
+</body>
+</html>
